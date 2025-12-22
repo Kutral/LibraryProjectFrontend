@@ -13,20 +13,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Dashboard</title>
-    <!-- Use standard link with context path -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <title>Dashboard - The Knowledge Nexus</title>
+    <!-- Use timestamp to bust cache -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css?v=<%= System.currentTimeMillis() %>">
 </head>
 <body>
 
     <!-- Navigation -->
     <nav class="navbar">
         <a href="${pageContext.request.contextPath}/dashboard" class="navbar-brand">
-            <span style="font-size: 1.5rem;">📚</span> 
+            <span>📚</span> 
             <span>Knowledge Nexus</span>
         </a>
         <div class="navbar-user">
-            <span>Hello, ${sessionScope.user.username}</span>
+            <span>Welcome, <strong>${sessionScope.user.username}</strong></span>
             <a href="${pageContext.request.contextPath}/index.jsp" class="btn-logout">Logout</a>
         </div>
     </nav>
@@ -48,13 +48,13 @@
                 </div>
             </c:if>
 
-            <div class="section-title" style="margin-bottom: 0.5rem; border:none;">
+            <div class="section-title" style="border-bottom:none; margin-bottom: 0.5rem;">
                 <span>Library Catalog</span>
             </div>
 
             <div class="search-bar">
                 <form action="${pageContext.request.contextPath}/dashboard" method="GET">
-                    <input type="text" name="query" class="search-input" placeholder="Search books by title or author..." value="${searchQuery}">
+                    <input type="text" name="query" class="search-input" placeholder="Search by title, author..." value="${searchQuery}">
                 </form>
             </div>
 
@@ -63,13 +63,17 @@
                     <c:when test="${not empty books}">
                         <c:forEach var="book" items="${books}">
                             <div class="book-card">
-                                <div class="book-icon">📘</div>
+                                <div class="book-icon">📖</div>
                                 <div>
                                     <div class="book-title"><c:out value="${book.title}"/></div>
-                                    <div class="book-author"><c:out value="${book.author}"/></div>
+                                    <div class="book-author">by <c:out value="${book.author}"/></div>
                                 </div>
                                 <div class="book-meta">
                                     <c:choose>
+                                        <c:when test="${activeBookIds.contains(book.id)}">
+                                            <span class="badge" style="background:rgba(255, 255, 255, 0.1); color:var(--text-main); border:1px solid var(--text-muted);">Already Borrowed</span>
+                                            <button class="btn" disabled style="width:100%; margin-top:10px; opacity:0.5; cursor:default;">Active Loan</button>
+                                        </c:when>
                                         <c:when test="${book.availableCopies > 0}">
                                             <span class="badge badge-available"><c:out value="${book.availableCopies}"/> Available</span>
                                             <form action="${pageContext.request.contextPath}/borrowBook" method="POST" style="width:100%; margin-top:10px;">
@@ -80,7 +84,7 @@
                                         </c:when>
                                         <c:otherwise>
                                             <span class="badge badge-out">Out of Stock</span>
-                                            <button class="btn btn-primary" disabled style="width:100%; margin-top:10px;">Unavailable</button>
+                                            <button class="btn btn-primary" disabled style="width:100%; margin-top:10px; opacity:0.5;">Unavailable</button>
                                         </c:otherwise>
                                     </c:choose>
                                 </div>
@@ -90,7 +94,7 @@
                     <c:otherwise>
                         <div class="empty-state">
                             <p>No books found matching your search.</p>
-                            <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-secondary">Clear Search</a>
+                            <a href="${pageContext.request.contextPath}/dashboard" class="btn">Clear Search</a>
                         </div>
                     </c:otherwise>
                 </c:choose>
@@ -101,7 +105,7 @@
         <aside class="history-panel">
             <div class="section-title">
                 <span>My Bookshelf</span>
-                <a href="${pageContext.request.contextPath}/dashboard" title="Refresh" style="color:var(--text-secondary); text-decoration:none;">&#x21bb;</a>
+                <a href="${pageContext.request.contextPath}/dashboard" title="Refresh" style="color:var(--text-muted); font-size:1.2rem;">&#x21bb;</a>
             </div>
             
             <ul class="history-list">
@@ -110,7 +114,7 @@
                          <c:forEach var="item" items="${history}">
                             <li class="history-item">
                                 <div class="history-info">
-                                    <h4><c:out value="${item.bookTitle}"/></h4>
+                                    <h4 style="margin:0; font-size:1rem; color:var(--text-main);"><c:out value="${item.bookTitle}"/></h4>
                                     <div class="history-date">
                                         Borrowed: <c:out value="${item.borrowDate}"/>
                                         <c:if test="${not empty item.returnDate}">
@@ -123,7 +127,7 @@
                                         <form action="${pageContext.request.contextPath}/borrowBook" method="POST" style="margin:0;">
                                             <input type="hidden" name="borrowId" value="${item.id}">
                                             <input type="hidden" name="action" value="return">
-                                            <button type="submit" class="btn btn-danger" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;">Return</button>
+                                            <button type="submit" class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Return</button>
                                         </form>
                                     </c:when>
                                     <c:otherwise>
@@ -134,7 +138,7 @@
                          </c:forEach>
                     </c:when>
                     <c:otherwise>
-                        <li class="empty-state">Your history is empty.</li>
+                        <li class="empty-state" style="padding: 1rem; background:none;">You haven't borrowed any books.</li>
                     </c:otherwise>
                 </c:choose>
             </ul>

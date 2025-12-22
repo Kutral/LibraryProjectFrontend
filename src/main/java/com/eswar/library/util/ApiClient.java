@@ -49,6 +49,15 @@ public class ApiClient {
         return sendRequest(request);
     }
 
+    public static ApiResponse delete(String endpoint) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + endpoint))
+                .header("Content-Type", "application/json")
+                .DELETE()
+                .build();
+        return sendRequest(request);
+    }
+
     private static ApiResponse sendRequest(HttpRequest request) throws Exception {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         String body = response.body();

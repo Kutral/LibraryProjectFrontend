@@ -4,17 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Knowledge Nexus</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <title>Login - The Knowledge Nexus</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css?v=<%= System.currentTimeMillis() %>">
+    <style>
+        body {
+            /* Ensure centering for login page specifically */
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
 </head>
-<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+<body>
 
     <div class="container">
-        <div style="margin-bottom: 2rem;">
-            <span style="font-size: 3rem;">📚</span>
-        </div>
-        <h1>Welcome Back</h1>
-        <p>Sign in to continue to Knowledge Nexus</p>
+        <h1 style="font-size: 2rem;">Welcome Back</h1>
+        <p>Sign in to continue to The Knowledge Nexus</p>
         
         <%
             String error = (String) request.getAttribute("errorMessage");
@@ -42,7 +46,7 @@
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required placeholder="Enter your password">
             </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">Sign In</button>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
         </form>
         
         <p class="footer-text">

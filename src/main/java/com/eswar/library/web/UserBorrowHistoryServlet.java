@@ -39,7 +39,7 @@ public class UserBorrowHistoryServlet extends HttpServlet {
             // Fetch history for the logged-in user
             ApiClient.ApiResponse apiResp = ApiClient.get("/borrow?userId=" + user.getId());
 
-            // JSON Response for AJAX
+
             if ("true".equals(req.getParameter("json"))) {
                 resp.setContentType("application/json");
                 resp.setCharacterEncoding("UTF-8");

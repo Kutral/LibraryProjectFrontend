@@ -11,6 +11,9 @@ public class Borrow {
     private boolean returned;
     private Book book;
 
+    private String bookTitle;
+    private String bookAuthor;
+
     public Borrow() {}
 
     public int getId() { return id; }
@@ -33,4 +36,10 @@ public class Borrow {
 
     public Book getBook() { return book; }
     public void setBook(Book book) { this.book = book; }
+
+    public String getBookTitle() { return bookTitle; }
+    public void setBookTitle(String bookTitle) { this.bookTitle = bookTitle; }
+
+    public String getBookAuthor() { return bookAuthor; }
+    public void setBookAuthor(String bookAuthor) { this.bookAuthor = bookAuthor; }
 }

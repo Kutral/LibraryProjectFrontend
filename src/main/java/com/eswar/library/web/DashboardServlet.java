@@ -16,7 +16,9 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @WebServlet("/dashboard")
 public class DashboardServlet extends HttpServlet {
@@ -51,14 +53,21 @@ public class DashboardServlet extends HttpServlet {
             req.setAttribute("error", "Failed to fetch books.");
         }
 
-        // 2. Fetch History
+        // 2. Fetch History & Identify Active Borrows
         List<Borrow> history = new ArrayList<>();
+        Set<Integer> activeBookIds = new HashSet<>();
         try {
             ApiClient.ApiResponse historyResp = ApiClient.get("/borrow?userId=" + user.getId());
             if (historyResp.isSuccess() && historyResp.getDataJson() != null) {
                 Gson gson = new Gson();
                 Type listType = new TypeToken<ArrayList<Borrow>>(){}.getType();
                 history = gson.fromJson(historyResp.getDataJson(), listType);
+                
+                for (Borrow b : history) {
+                    if (b.getReturnDate() == null) {
+                        activeBookIds.add(b.getBookId());
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,6 +75,7 @@ public class DashboardServlet extends HttpServlet {
 
         req.setAttribute("books", books);
         req.setAttribute("history", history);
+        req.setAttribute("activeBookIds", activeBookIds);
         req.setAttribute("searchQuery", query);
         
         req.getRequestDispatcher("/jsp/dashboard.jsp").forward(req, resp);
