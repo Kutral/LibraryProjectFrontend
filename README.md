@@ -26,16 +26,6 @@
 
 ---
 
-## 🎨 UI Design: "The Nexus"
-
-The application moves away from traditional, flat enterprise designs in favor of a modern aesthetic:
-*   **Theme:** Deep Space Dark Mode (`#0f172a` base).
-*   **Effect:** Glassmorphism (Frosted glass transparency on cards and navbars).
-*   **Accent:** Neon Cyan & Blue gradients for actions and highlights.
-*   **Interactivity:** Hover lift effects, glowing inputs, and smooth transitions.
-
----
-
 ## 🏗️ Architecture
 
 This project follows a **Proxy-MVC Pattern**. The Frontend Server handles all UI/UX logic and delegates data persistence to a separate Backend API.
