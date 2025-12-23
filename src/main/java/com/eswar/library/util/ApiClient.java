@@ -13,7 +13,7 @@ import java.util.Map;
 public class ApiClient {
 
 
-    private static final String BASE_URL = "http://127.0.0.1:8080/api";
+    private static final String BASE_URL = "https://librarybackend-1dvi.onrender.com/api";
 
     private static final HttpClient client = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
