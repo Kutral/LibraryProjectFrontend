@@ -70,8 +70,17 @@ public class BorrowBookServlet extends HttpServlet {
             error = "System error: " + e.getMessage();
         }
 
-        // Redirect back to dashboard
-        StringBuilder redirectUrl = new StringBuilder(req.getContextPath() + "/dashboard");
+        // Determine redirect target
+        String source = req.getParameter("source");
+        String targetPage = "/dashboard";
+        if ("history".equals(source)) {
+            targetPage = "/history";
+        } else if ("myBooks".equals(source)) {
+            targetPage = "/myBooks";
+        }
+
+        // Redirect
+        StringBuilder redirectUrl = new StringBuilder(req.getContextPath() + targetPage);
         if (error != null) {
             redirectUrl.append("?error=").append(URLEncoder.encode(error, StandardCharsets.UTF_8));
         } else if (message != null) {

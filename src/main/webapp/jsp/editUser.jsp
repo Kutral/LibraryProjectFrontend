@@ -1,49 +1,63 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="jakarta.tags.core" prefix="c" %>
-<%
-    if (session.getAttribute("user") == null || !"ADMIN".equalsIgnoreCase(((com.eswar.library.model.User)session.getAttribute("user")).getRole())) {
-        response.sendRedirect(request.getContextPath() + "/jsp/login.jsp");
-        return;
-    }
-%>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit User - The Knowledge Nexus</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css?v=<%= System.currentTimeMillis() %>">
-    <style>body { justify-content: center; align-items: center; }</style>
-</head>
-<body>
-    <div class="container">
-        <h1>Edit User</h1>
-        <p>Manage user credentials.</p>
+    <%@ taglib uri="jakarta.tags.core" prefix="c" %>
+        <% if (session.getAttribute("user")==null ||
+            !"ADMIN".equalsIgnoreCase(((com.eswar.library.model.User)session.getAttribute("user")).getRole())) {
+            response.sendRedirect(request.getContextPath() + "/jsp/login.jsp" ); return; } %>
+            <!DOCTYPE html>
+            <html lang="en">
 
-        <form action="${pageContext.request.contextPath}/admin/users" method="post">
-            <input type="hidden" name="action" value="update">
-            <input type="hidden" name="id" value="${param.id}">
-            
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" value="${param.username}" disabled style="opacity: 0.7; cursor: not-allowed;">
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required value="${param.email}">
-            </div>
-            <div class="form-group">
-                <label for="role">Role</label>
-                <select id="role" name="role" class="search-input" style="border-radius:12px;">
-                    <option value="USER" ${param.role == 'USER' ? 'selected' : ''}>User</option>
-                    <option value="ADMIN" ${param.role == 'ADMIN' ? 'selected' : ''}>Admin</option>
-                </select>
-            </div>
+            <head>
+                <meta charset="UTF-8">
+                <title>Edit User - The Knowledge Nexus</title>
+                <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet" />
+                <link rel="stylesheet"
+                    href="${pageContext.request.contextPath}/css/style.css?v=<%= System.currentTimeMillis() %>">
+                <style>
+                    body {
+                        justify-content: center;
+                        align-items: center;
+                    }
+                </style>
+            </head>
 
-            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-                <button type="submit" class="btn btn-primary" style="flex:1;">Update User</button>
-                <a href="${pageContext.request.contextPath}/admin/users" class="btn btn-secondary" style="flex:1;">Cancel</a>
-            </div>
-        </form>
-    </div>
-</body>
-</html>
+            <body>
+                <div class="center-wrapper">
+                    <div class="glass-panel auth-card" style="max-width: 500px;">
+                        <div style="margin-bottom: 32px;">
+                            <h1 style="margin-bottom: 8px;">Edit User</h1>
+                            <p>Manage permissions.</p>
+                        </div>
+
+                        <form action="${pageContext.request.contextPath}/admin/users" method="post">
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="id" value="${param.id}">
+
+                            <div class="form-group" style="text-align: left;">
+                                <label><i class="ri-user-line"></i> Username</label>
+                                <input type="text" value="${param.username}" disabled
+                                    style="opacity: 0.5; cursor: not-allowed; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: var(--text-muted);">
+                            </div>
+                            <div class="form-group" style="text-align: left;">
+                                <label for="email"><i class="ri-mail-line"></i> Email</label>
+                                <input type="email" id="email" name="email" required value="${param.email}">
+                            </div>
+                            <div class="form-group" style="text-align: left;">
+                                <label for="role"><i class="ri-shield-user-line"></i> Role</label>
+                                <select id="role" name="role">
+                                    <option value="USER" ${param.role=='USER' ? 'selected' : '' }>User</option>
+                                    <option value="ADMIN" ${param.role=='ADMIN' ? 'selected' : '' }>Admin</option>
+                                </select>
+                            </div>
+
+                            <div style="display: flex; gap: 1rem; margin-top: 32px;">
+                                <a href="${pageContext.request.contextPath}/admin/users" class="btn btn-secondary"
+                                    style="flex:1; justify-content: center;">Cancel</a>
+                                <button type="submit" class="btn btn-primary"
+                                    style="flex:1; justify-content: center;">Update User</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </body>
+
+            </html>

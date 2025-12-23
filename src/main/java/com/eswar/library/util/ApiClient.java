@@ -8,6 +8,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Map;
 
 public class ApiClient {
 
@@ -21,62 +22,99 @@ public class ApiClient {
     private static final Gson gson = new Gson();
 
     public static ApiResponse post(String endpoint, Object payload) throws Exception {
-        String jsonBody = gson.toJson(payload);
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + endpoint)) // e.g., /auth/login
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
-                .build();
-        return sendRequest(request);
+        return post(endpoint, payload, null);
     }
 
-    public static ApiResponse put(String endpoint, Object payload) throws Exception {
+    public static ApiResponse post(String endpoint, Object payload, Map<String, String> headers) throws Exception {
         String jsonBody = gson.toJson(payload);
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + endpoint))
                 .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString(jsonBody))
-                .build();
-        return sendRequest(request);
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody));
+        if (headers != null) {
+            headers.forEach(builder::header);
+        }
+        return sendRequest(builder.build());
     }
 
     public static ApiResponse get(String endpoint) throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
+        return get(endpoint, null);
+    }
+
+    public static ApiResponse get(String endpoint, Map<String, String> headers) throws Exception {
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + endpoint))
                 .header("Content-Type", "application/json")
+                .GET();
+        if (headers != null) {
+            headers.forEach(builder::header);
+        }
+        return sendRequest(builder.build());
+    }
+
+    public static ApiResponse put(String endpoint, Object payload) throws Exception {
+        return put(endpoint, payload, null);
+    }
+
+    public static ApiResponse put(String endpoint, Object payload, Map<String, String> headers) throws Exception {
+        String jsonBody = gson.toJson(payload);
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + endpoint))
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.ofString(jsonBody));
+        if (headers != null) {
+            headers.forEach(builder::header);
+        }
+        return sendRequest(builder.build());
+    }
+
+    public static ApiResponse getExternal(String fullUrl) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(fullUrl))
+                .header("Accept", "application/json")
                 .GET()
                 .build();
         return sendRequest(request);
     }
 
     public static ApiResponse delete(String endpoint) throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
+        return delete(endpoint, null);
+    }
+
+    public static ApiResponse delete(String endpoint, Map<String, String> headers) throws Exception {
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + endpoint))
                 .header("Content-Type", "application/json")
-                .DELETE()
-                .build();
-        return sendRequest(request);
+                .DELETE();
+        if (headers != null) {
+            headers.forEach(builder::header);
+        }
+        return sendRequest(builder.build());
     }
 
     private static ApiResponse sendRequest(HttpRequest request) throws Exception {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         String body = response.body();
 
-
         try {
-            JsonObject jsonResponse = JsonParser.parseString(body).getAsJsonObject();
-            if (jsonResponse.has("success")) {
-                 boolean success = jsonResponse.get("success").getAsBoolean();
-                 String message = jsonResponse.has("message") ? jsonResponse.get("message").getAsString() : "";
-                 // Extract 'data' field if it exists
-                 String dataJson = jsonResponse.has("data") ? gson.toJson(jsonResponse.get("data")) : null;
-                 return new ApiResponse(success, message, dataJson, response.statusCode());
+            if (body != null && !body.trim().isEmpty()) {
+                JsonObject jsonResponse = JsonParser.parseString(body).getAsJsonObject();
+                if (jsonResponse.has("success")) {
+                    boolean success = jsonResponse.get("success").getAsBoolean();
+                    String message = jsonResponse.has("message") ? jsonResponse.get("message").getAsString() : "No message provided";
+                    String dataJson = jsonResponse.has("data") ? gson.toJson(jsonResponse.get("data")) : null;
+                    return new ApiResponse(success, message, dataJson, response.statusCode());
+                }
             }
         } catch (Exception e) {
-            // Fallback for raw arrays or errors
+            // Not a JsonObject or doesn't have 'success'
         }
 
-        return new ApiResponse(response.statusCode() == 200, "Request completed", body, response.statusCode());
+        boolean isSuccess = response.statusCode() >= 200 && response.statusCode() < 300;
+        String message = (body != null && body.length() < 200) ? body : "HTTP " + response.statusCode();
+        if (message.isEmpty()) message = "Request completed";
+
+        return new ApiResponse(isSuccess, message, body, response.statusCode());
     }
 
     // Inner DTO class to handle responses

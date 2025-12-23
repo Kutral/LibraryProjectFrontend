@@ -63,19 +63,36 @@ public class AdminUsersServlet extends HttpServlet {
         String error = null;
 
         try {
+            Map<String, String> headers = new HashMap<>();
+            headers.put("X-User-ID", String.valueOf(currentUser.getId()));
+
             if ("update".equals(action)) {
                 Map<String, Object> payload = new HashMap<>();
                 payload.put("id", Integer.parseInt(req.getParameter("id")));
                 payload.put("email", req.getParameter("email"));
                 payload.put("role", req.getParameter("role"));
 
-                ApiClient.ApiResponse apiResp = ApiClient.put("/admin/users", payload);
+                ApiClient.ApiResponse apiResp = ApiClient.put("/admin/users", payload, headers);
                 if (!apiResp.isSuccess()) error = apiResp.getMessage();
 
             } else if ("delete".equals(action)) {
                 String id = req.getParameter("id");
-                ApiClient.ApiResponse apiResp = ApiClient.delete("/admin/users?id=" + id);
-                if (!apiResp.isSuccess()) error = apiResp.getMessage();
+                System.out.println("AdminUsersServlet: Attempting to delete user ID: " + id);
+                
+                // Try query parameter first (as per documentation)
+                ApiClient.ApiResponse apiResp = ApiClient.delete("/admin/users?id=" + id, headers);
+                System.out.println("Delete (Query Param) Status: " + apiResp.getStatusCode());
+                
+                // Fallback: Try RESTful path parameter
+                if (!apiResp.isSuccess()) {
+                    ApiClient.ApiResponse pathResp = ApiClient.delete("/admin/users/" + id, headers);
+                    System.out.println("Delete (Path Param) Status: " + pathResp.getStatusCode());
+                    if (pathResp.isSuccess()) apiResp = pathResp;
+                }
+                
+                if (!apiResp.isSuccess()) {
+                    error = "User deletion failed (HTTP " + apiResp.getStatusCode() + "): " + apiResp.getMessage();
+                }
             }
 
         } catch (Exception e) {
@@ -86,7 +103,8 @@ public class AdminUsersServlet extends HttpServlet {
         if (error != null) {
             resp.sendRedirect(req.getContextPath() + "/admin/users?error=" + URLEncoder.encode(error, StandardCharsets.UTF_8));
         } else {
-            resp.sendRedirect(req.getContextPath() + "/admin/users");
+            String msg = "Operation completed successfully.";
+            resp.sendRedirect(req.getContextPath() + "/admin/users?msg=" + URLEncoder.encode(msg, StandardCharsets.UTF_8));
         }
     }
 }

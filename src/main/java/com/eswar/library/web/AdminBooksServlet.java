@@ -32,6 +32,9 @@ public class AdminBooksServlet extends HttpServlet {
         String error = null;
 
         try {
+            Map<String, String> headers = new HashMap<>();
+            headers.put("X-User-ID", String.valueOf(user.getId()));
+
             if ("create".equals(action)) {
                 System.out.println("AdminBooksServlet: Creating book...");
                 Map<String, Object> payload = new HashMap<>();
@@ -40,12 +43,7 @@ public class AdminBooksServlet extends HttpServlet {
                 payload.put("isbn", req.getParameter("isbn"));
                 payload.put("availableCopies", Integer.parseInt(req.getParameter("copies")));
                 
-                System.out.println("Payload: " + payload);
-
-                ApiClient.ApiResponse apiResp = ApiClient.post("/admin/books", payload);
-                System.out.println("API Response Success: " + apiResp.isSuccess());
-                System.out.println("API Response Message: " + apiResp.getMessage());
-                
+                ApiClient.ApiResponse apiResp = ApiClient.post("/admin/books", payload, headers);
                 if (!apiResp.isSuccess()) error = apiResp.getMessage();
 
             } else if ("update".equals(action)) {
@@ -57,12 +55,26 @@ public class AdminBooksServlet extends HttpServlet {
                 payload.put("isbn", req.getParameter("isbn"));
                 payload.put("availableCopies", Integer.parseInt(req.getParameter("copies")));
 
-                ApiClient.ApiResponse apiResp = ApiClient.put("/admin/books", payload); // Backend typically expects PUT for update
+                ApiClient.ApiResponse apiResp = ApiClient.put("/admin/books", payload, headers); 
                 if (!apiResp.isSuccess()) error = apiResp.getMessage();
 
             } else if ("delete".equals(action)) {
                 String id = req.getParameter("id");
-                ApiClient.ApiResponse apiResp = ApiClient.delete("/admin/books?id=" + id);
+                // Try query parameter first
+                ApiClient.ApiResponse apiResp = ApiClient.delete("/admin/books?id=" + id, headers);
+                
+                // Fallback 1: Path parameter
+                if (!apiResp.isSuccess()) {
+                    ApiClient.ApiResponse pathResp = ApiClient.delete("/admin/books/" + id, headers);
+                    if (pathResp.isSuccess()) apiResp = pathResp;
+                }
+                
+                // Fallback 2: bookId parameter
+                if (!apiResp.isSuccess()) {
+                    ApiClient.ApiResponse bookIdResp = ApiClient.delete("/admin/books?bookId=" + id, headers);
+                    if (bookIdResp.isSuccess()) apiResp = bookIdResp;
+                }
+                
                 if (!apiResp.isSuccess()) error = apiResp.getMessage();
             }
 
@@ -74,7 +86,8 @@ public class AdminBooksServlet extends HttpServlet {
         if (error != null) {
             resp.sendRedirect(req.getContextPath() + "/books?error=" + URLEncoder.encode(error, StandardCharsets.UTF_8));
         } else {
-            resp.sendRedirect(req.getContextPath() + "/books");
+            String msg = "Operation completed successfully.";
+            resp.sendRedirect(req.getContextPath() + "/books?msg=" + URLEncoder.encode(msg, StandardCharsets.UTF_8));
         }
     }
 }
