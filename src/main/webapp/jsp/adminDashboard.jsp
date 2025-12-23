@@ -46,7 +46,7 @@
                             Circulation</a>
                     </li>
                     <li class="nav-item" style="margin-top: auto;">
-                        <a href="${pageContext.request.contextPath}/index.jsp"><i class="ri-logout-box-r-line"></i>
+                        <a href="${pageContext.request.contextPath}/logout"><i class="ri-logout-box-r-line"></i>
                             Logout</a>
                     </li>
                 </ul>

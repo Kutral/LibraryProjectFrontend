@@ -31,7 +31,7 @@
                     <a href="${pageContext.request.contextPath}/history"><i class="ri-history-line"></i> History</a>
                 </li>
                 <li class="nav-item" style="margin-top: auto;">
-                    <a href="${pageContext.request.contextPath}/index.jsp"><i class="ri-logout-box-r-line"></i> Logout</a>
+                    <a href="${pageContext.request.contextPath}/logout"><i class="ri-logout-box-r-line"></i> Logout</a>
                 </li>
             </ul>
         </aside>
