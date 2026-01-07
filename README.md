@@ -1,6 +1,8 @@
+<div align="center">
+   
 # 📚 Library Management System
 
-<div align="center">
+
 
 ![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=java)
 ![Jakarta EE](https://img.shields.io/badge/Jakarta%20EE-10-black?style=for-the-badge&logo=jakarta)
