@@ -1,35 +1,94 @@
-# 📚 Library Management System - Frontend
+# 📚 Library Management System
 
-A modern, glassmorphism-style web interface for managing a library, built with Java (JSP/Servlets).
+<div align="center">
+
+![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=java)
+![Jakarta EE](https://img.shields.io/badge/Jakarta%20EE-10-black?style=for-the-badge&logo=jakarta)
+![Three.js](https://img.shields.io/badge/Three.js-r128-black?style=for-the-badge&logo=three.js)
+![Docker](https://img.shields.io/badge/Docker-Ready-blue?style=for-the-badge&logo=docker)
+
+### *A professional, full-stack library management solution with a modern glassmorphism interface.*
+
+</div>
+
+---
 
 ## 🚀 Live Demo & Links
-- **Frontend App:** https://libraryfrontend-1ter.onrender.com
-- **Backend API:** https://librarybackend-1dvi.onrender.com
+*   **Frontend App:** [https://libraryfrontend-1ter.onrender.com](https://libraryfrontend-1ter.onrender.com)
+*   **Backend API:** [https://librarybackend-1dvi.onrender.com](https://librarybackend-1dvi.onrender.com)
+*   **Backend Repository:** [https://github.com/Kutral/LibraryProject](https://github.com/Kutral/LibraryProject)
+
+---
 
 ## ✨ New Features
-- **Modern UI:** Complete overhaul using a Dark Glassmorphism theme.
-- **Global Search:** Search millions of books via Open Library API integration.
-- **Automated Covers:** Real-time book cover fetching based on ISBN.
-- **My Shelf:** Dedicated section for users to manage active loans and returns.
-- **Book Requests:** Collaborative system for users to request new titles.
-- **Admin Stats:** Live dashboard showing total users, books, and active loans.
-- **API Monitor:** Real-time status tracker for external API connectivity.
+*   **Modern Glassmorphism UI:** A sleek, dark-themed interface with translucent elements and blurred backgrounds.
+*   **Immersive 3D Experience:** Dynamic 3D starfield background powered by **Three.js** on authentication pages.
+*   **Global Book Search:** Integrated with the **Open Library API** to search and import millions of books.
+*   **Dynamic Cover Art:** Automatic fetching and display of book covers using ISBN-based URL resolution.
+*   **Responsive Dashboard:** Synchronized grid layouts for books, borrowing history, and global search results.
 
-## 🛡️ Security & Fixes
-- **Auth Filter:** Secured all private routes against unauthorized access.
-- **Logout Logic:** Fixed "Back Button" vulnerability by implementing server-side session invalidation and anti-caching headers.
-- **Robust Deletion:** Implemented a triple-fallback system for deleting books/users to ensure backend compatibility.
+---
+
+## 🚀 Key Features
+
+### 👤 For Users
+*   🔐 **Secure Authentication:** Robust Login and Signup with session management and secure routing.
+*   🔍 **Smart Discovery:** Real-time search across the local catalog and global library databases.
+*   📖 **Borrowing Engine:** Transaction-safe system for borrowing books with real-time availability updates.
+*   ↩️ **Easy Returns:** Simplified one-click return process to manage your active loans.
+*   📜 **History Tracking:** Comprehensive view of all your past and currently active borrows.
+
+### 🛡️ For Administrators
+*   📚 **Inventory Control:** Complete CRUD operations (Create, Read, Update, Delete) for managing the local collection.
+*   👥 **User Management:** Oversight of all registered users with the ability to manage roles and accounts.
+*   📝 **Request Approval:** Dedicated system to review and process user requests for acquiring new books.
+*   📊 **Analytics Dashboard:** Visual insights into total library statistics, including user activity and circulation trends.
+
+---
 
 ## 🛠️ Tech Stack
-- **Core:** Java 21, Jakarta Servlet 6.0, JSP 3.0
-- **Integrations:** Open Library (Search & Covers)
-- **Data:** Google Gson for REST API communication
-- **Deployment:** Docker (Multi-stage build) for Render hosting
+
+| Component | Technology | Description |
+| :--- | :--- | :--- |
+| **Language** | Java 21 | Modern LTS version utilized for backend logic and API interaction. |
+| **Web Framework** | Jakarta Servlet 6.1 & JSP 3.0 | Core technologies for handling web requests and dynamic content rendering. |
+| **Dependency Injection** | Weld (CDI 4.0) | JBoss Weld implementation for Contexts and Dependency Injection. |
+| **REST Integration** | Jersey 4.0 (JAX-RS) | GlassFish Jersey for building and consuming RESTful web services. |
+| **JSON Processing** | Google Gson 2.10 | High-performance library for converting Java Objects into JSON and back. |
+| **Frontend Visuals** | Three.js & Remix Icons | 3D graphics library for the background and comprehensive iconography. |
+| **Styling** | CSS3 (Custom Glassmorphism) | Modern CSS techniques for a translucent, blurred-background aesthetic. |
+| **Templating** | JSTL 3.0 | Jakarta Standard Tag Library for simplified JSP development. |
+| **Build Tool** | Maven 3.9 | For dependency management, lifecycle control, and automated builds. |
+
+---
 
 ## 💻 Local Setup
-1. Ensure the `BASE_URL` in `ApiClient.java` points to the live backend URL.
-2. Build the project:
+
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/kutraleeswaran/LibraryProjectFrontend.git
+   cd LibraryProjectFrontend
+   ```
+
+2. **Configure API Frequency:**
+   Update the `BASE_URL` in `src/main/java/com/eswar/library/util/ApiClient.java` to point to your backend coordinates.
+
+3. **Compile the Project:**
    ```bash
    ./mvnw clean package
    ```
-3. Run the generated WAR on Tomcat 10+.
+
+4. **Run:**
+   Deploy the generated `library.war` from the `target` folder to an Apache Tomcat 10.1+ server.
+
+---
+
+<div align="center">
+
+### 👨‍💻 Developed By
+
+**[Kutraleeswaran](https://github.com/kutraleeswaran)**
+
+*"Knowledge is the only infinite resource."*
+
+</div>
