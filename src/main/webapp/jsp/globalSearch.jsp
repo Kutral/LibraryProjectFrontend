@@ -101,12 +101,13 @@
                 <div class="alert alert-danger">${error}</div>
             </c:if>
 
-            <div class="content-grid">
+            <div class="content-grid" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));">
                 <c:choose>
                     <c:when test="${not empty results}">
                         <c:forEach var="book" items="${results}">
-                            <div class="glass-panel book-card-premium" style="padding: 20px;">
-                                <div style="width: 100%; height: 240px; margin-bottom: 20px; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.2); position: relative;">
+                            <div class="glass-panel" style="padding: 0; display: flex; height: 200px; transition: transform 0.3s ease; border: 1px solid var(--glass-border); overflow: hidden; position: relative;">
+                                <!-- Cover Section -->
+                                <div style="width: 130px; background: rgba(0,0,0,0.3); border-right: 1px solid var(--glass-border); position: relative;">
                                     <c:set var="isbn" value="${book.getFirstIsbn()}" />
                                     <c:choose>
                                         <c:when test="${book.coverI > 0}">
@@ -114,7 +115,7 @@
                                                  alt="${book.title}" 
                                                  style="width: 100%; height: 100%; object-fit: cover;"
                                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                            <div class="book-fallback-icon" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: rgba(255, 153, 0, 0.1); color: #FF9900; font-size: 3rem;">
+                                            <div class="book-fallback-icon" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: rgba(255, 153, 0, 0.1); color: #FF9900; font-size: 2.5rem; position: absolute; top:0; left:0;">
                                                 <i class="ri-book-3-line"></i>
                                             </div>
                                         </c:when>
@@ -123,42 +124,52 @@
                                                  alt="${book.title}" 
                                                  style="width: 100%; height: 100%; object-fit: cover;"
                                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                            <div class="book-fallback-icon" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: rgba(255, 153, 0, 0.1); color: #FF9900; font-size: 3rem;">
+                                            <div class="book-fallback-icon" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: rgba(255, 153, 0, 0.1); color: #FF9900; font-size: 2.5rem; position: absolute; top:0; left:0;">
                                                 <i class="ri-book-3-line"></i>
                                             </div>
                                         </c:when>
                                         <c:otherwise>
-                                            <div class="book-fallback-icon" style="display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; background: rgba(255, 153, 0, 0.1); color: #FF9900; font-size: 3rem;">
+                                            <div class="book-fallback-icon" style="display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; background: rgba(255, 153, 0, 0.1); color: #FF9900; font-size: 2.5rem; position: absolute; top:0; left:0;">
                                                 <i class="ri-book-3-line"></i>
                                             </div>
                                         </c:otherwise>
                                     </c:choose>
                                 </div>
-                                <div class="book-title" title="${book.title}">${book.title}</div>
-                                <div class="book-author">${book.getAuthorsJoined()}</div>
-                                <div style="margin-top: auto; color: var(--text-muted); font-size: 0.8rem; display: flex; justify-content: space-between; width: 100%;">
-                                    <span>${book.first_publish_year}</span>
-                                    <span>${not empty isbn ? isbn : 'No ISBN'}</span>
+
+                                <!-- Info Section -->
+                                <div style="padding: 20px; flex: 1; display: flex; flex-direction: column; min-width: 0;">
+                                    <div class="book-title" style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${book.title}">
+                                        ${book.title}
+                                    </div>
+                                    <div class="book-author" style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px;">
+                                        ${book.getAuthorsJoined()}
+                                    </div>
+                                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; font-family: monospace;">
+                                        ${book.first_publish_year} • ${not empty isbn ? isbn : 'No ISBN'}
+                                    </div>
+
+                                    <div style="margin-top: auto;">
+                                        <c:choose>
+                                            <c:when test="${sessionScope.user.role == 'ADMIN'}">
+                                                <a href="${pageContext.request.contextPath}/jsp/addBook.jsp?title=${book.title}&author=${book.getAuthorsJoined()}&isbn=${isbn}" 
+                                                   class="btn btn-secondary" style="width: 100%; padding: 8px; font-size: 0.9rem; justify-content: center;">
+                                                    <i class="ri-add-line"></i> Import to Local
+                                                </a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <form action="${pageContext.request.contextPath}/requests" method="post" style="margin: 0;">
+                                                    <input type="hidden" name="action" value="create">
+                                                    <input type="hidden" name="title" value="${book.title}">
+                                                    <input type="hidden" name="author" value="${book.getAuthorsJoined()}">
+                                                    <input type="hidden" name="isbn" value="${isbn}">
+                                                    <button type="submit" class="btn btn-secondary" style="width: 100%; padding: 8px; font-size: 0.9rem; justify-content: center;">
+                                                        <i class="ri-git-pull-request-line"></i> Request Book
+                                                    </button>
+                                                </form>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
                                 </div>
-                                <c:choose>
-                                    <c:when test="${sessionScope.user.role == 'ADMIN'}">
-                                        <a href="${pageContext.request.contextPath}/jsp/addBook.jsp?title=${book.title}&author=${book.getAuthorsJoined()}&isbn=${isbn}" 
-                                           class="btn btn-secondary" style="width: 100%; margin-top: 16px; padding: 8px;">
-                                            <i class="ri-add-line"></i> Import to Local
-                                        </a>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <form action="${pageContext.request.contextPath}/requests" method="post" style="margin: 0; width: 100%; margin-top: 16px;">
-                                            <input type="hidden" name="action" value="create">
-                                            <input type="hidden" name="title" value="${book.title}">
-                                            <input type="hidden" name="author" value="${book.getAuthorsJoined()}">
-                                            <input type="hidden" name="isbn" value="${isbn}">
-                                            <button type="submit" class="btn btn-secondary" style="width: 100%; padding: 8px;">
-                                                <i class="ri-git-pull-request-line"></i> Request Book
-                                            </button>
-                                        </form>
-                                    </c:otherwise>
-                                </c:choose>
                             </div>
                         </c:forEach>
                     </c:when>

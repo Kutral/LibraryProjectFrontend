@@ -114,7 +114,7 @@
                                                     </td>
                                                     <td>
                                                         <div style="display: flex; align-items: center; gap: 16px;">
-                                                            <div style="width: 45px; height: 68px; border-radius: 6px; overflow: hidden; background: rgba(255,255,255,0.05); flex-shrink: 0;">
+                                                            <div style="width: 45px; height: 68px; border-radius: 6px; overflow: hidden; background: rgba(0,0,0,0.3); flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
                                                                 <c:choose>
                                                                     <c:when test="${borrow.book != null}">
                                                                          <img src="https://covers.openlibrary.org/b/isbn/${borrow.book.isbn}-S.jpg?default=false" 

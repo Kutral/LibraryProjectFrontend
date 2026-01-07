@@ -12,9 +12,9 @@
 
             <head>
                 <meta charset="UTF-8">
-                <title>My Borrow History</title>
+                <title>My Borrow History - The Knowledge Nexus</title>
                 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet" />
-                <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+                <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css?v=<%= System.currentTimeMillis() %>">
             </head>
 
             <body>
@@ -75,84 +75,85 @@
                             <div class="alert alert-danger"><i class="ri-error-warning-line"></i> ${errorMessage}</div>
                         </c:if>
 
-                        <div class="glass-panel">
-                            <table class="premium-table">
-                                <thead>
-                                    <tr>
-                                        <th>Book Details</th>
-                                        <th>Borrowed</th>
-                                        <th>Returning</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <c:choose>
-                                        <c:when test="${empty history}">
-                                            <tr>
-                                                <td colspan="4"
-                                                    style="text-align:center; padding: 40px; color:var(--text-muted);">
-                                                    <i class="ri-history-line"
-                                                        style="font-size: 2rem; display:block; margin-bottom:10px;"></i>
-                                                    You haven't borrowed any books yet.
-                                                </td>
-                                            </tr>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <c:forEach var="b" items="${history}">
-                                                <tr>
-                                                    <td>
-                                                        <c:choose>
-                                                            <c:when test="${b.book != null}">
-                                                                <div style="display: flex; align-items: center; gap: 16px;">
-                                                                    <div style="width: 45px; height: 68px; border-radius: 6px; overflow: hidden; background: rgba(255,255,255,0.05); flex-shrink: 0;">
-                                                                        <img src="https://covers.openlibrary.org/b/isbn/${b.book.isbn}-S.jpg?default=false" 
-                                                                             alt="Cover" 
-                                                                             style="width: 100%; height: 100%; object-fit: cover;"
-                                                                             onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-muted);\'><i class=\'ri-book-line\'></i></div>';">
-                                                                    </div>
-                                                                    <div>
-                                                                        <div style="font-weight: 600; color: var(--text-primary);">
-                                                                            ${b.book.title}</div>
-                                                                        <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                                                                            by ${b.book.author}</div>
-                                                                    </div>
-                                                                </div>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <span style="color: var(--text-muted);">Book ID:
-                                                                    ${b.bookId}</span>
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                    </td>
-                                                    <td>${b.borrowDate}</td>
-                                                    <td>${b.returnDate != null ? b.returnDate : '-'}</td>
-                                                    <td>
-                                                        <c:choose>
-                                                            <c:when test="${b.returned || b.returnDate != null}">
-                                                                <span class="badge badge-success">Returned</span>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <form
-                                                                    action="${pageContext.request.contextPath}/borrowBook"
-                                                                    method="post" style="display:inline;">
-                                                                    <input type="hidden" name="action" value="return">
-                                                                    <input type="hidden" name="borrowId"
-                                                                        value="${b.id}">
-                                                                    <input type="hidden" name="source" value="history">
-                                                                    <button type="submit" class="btn btn-primary"
-                                                                        style="padding: 6px 16px; font-size: 0.75rem; min-width: auto;">
-                                                                        Return
-                                                                    </button>
-                                                                </form>
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                    </td>
-                                                </tr>
-                                            </c:forEach>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </tbody>
-                            </table>
+                        <div class="content-grid" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));">
+                            <c:choose>
+                                <c:when test="${empty history}">
+                                    <div class="glass-panel" style="padding: 60px; text-align: center; grid-column: 1/-1;">
+                                        <div style="width: 80px; height: 80px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+                                            <i class="ri-history-line" style="font-size: 2.5rem; color: var(--text-muted);"></i>
+                                        </div>
+                                        <h2 style="margin-bottom: 12px;">No activity yet</h2>
+                                        <p style="color: var(--text-secondary); max-width: 400px; margin: 0 auto 32px;">Start your reading journey by borrowing your first book from the catalog.</p>
+                                        <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-primary">Browse Catalog</a>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:forEach var="b" items="${history}">
+                                        <div class="glass-panel" style="padding: 0; display: flex; height: 200px; transition: transform 0.3s ease; border: 1px solid var(--glass-border); overflow: hidden; position: relative; opacity: ${b.returned || b.returnDate != null ? '0.8' : '1'};">
+                                            <!-- Cover Section -->
+                                            <div style="width: 130px; background: rgba(0,0,0,0.3); border-right: 1px solid var(--glass-border); position: relative;">
+                                                <c:choose>
+                                                    <c:when test="${b.book != null}">
+                                                        <img src="https://covers.openlibrary.org/b/isbn/${b.book.isbn}-M.jpg?default=false" 
+                                                             alt="Cover" 
+                                                             style="width: 100%; height: 100%; object-fit: cover;"
+                                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                        <div class="book-fallback-icon" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: rgba(255, 153, 0, 0.1); color: #FF9900; font-size: 2.5rem; position: absolute; top:0; left:0;">
+                                                            <i class="ri-book-3-line"></i>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <div class="book-fallback-icon" style="display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; background: rgba(255, 153, 0, 0.1); color: #FF9900; font-size: 2.5rem;">
+                                                            <i class="ri-book-3-line"></i>
+                                                        </div>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
+
+                                            <!-- Info Section -->
+                                            <div style="padding: 20px; flex: 1; display: flex; flex-direction: column; min-width: 0;">
+                                                <div style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    <c:out value="${b.bookTitle != null ? b.bookTitle : (b.book != null ? b.book.title : 'Unknown Book')}" />
+                                                </div>
+                                                <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px;">
+                                                    by <c:out value="${b.bookAuthor != null ? b.bookAuthor : (b.book != null ? b.book.author : 'Unknown Author')}" />
+                                                </div>
+
+                                                <div style="font-size: 0.8rem; color: var(--text-muted); display: grid; gap: 6px; margin-top: auto;">
+                                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                                        <i class="ri-calendar-line" style="color: var(--primary-accent);"></i>
+                                                        <span>Borrowed: ${b.borrowDate}</span>
+                                                    </div>
+                                                    <c:if test="${b.returnDate != null}">
+                                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                                            <i class="ri-checkbox-circle-line" style="color: var(--status-success);"></i>
+                                                            <span>Returned: ${b.returnDate}</span>
+                                                        </div>
+                                                    </c:if>
+                                                </div>
+
+                                                <div style="margin-top: 16px;">
+                                                    <c:choose>
+                                                        <c:when test="${b.returned || b.returnDate != null}">
+                                                            <div class="badge badge-success" style="width: 100%; text-align: center; padding: 8px;">Returned</div>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <form action="${pageContext.request.contextPath}/borrowBook" method="post" style="margin:0;">
+                                                                <input type="hidden" name="action" value="return">
+                                                                <input type="hidden" name="borrowId" value="${b.id}">
+                                                                <input type="hidden" name="source" value="history">
+                                                                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 8px; font-size: 0.85rem; justify-content: center;">
+                                                                    <i class="ri-arrow-go-back-line"></i> Return Book
+                                                                </button>
+                                                            </form>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
 
                     </main>

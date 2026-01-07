@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-        <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+    <%@ taglib uri="jakarta.tags.core" prefix="c" %>
+    <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 
             <% if (session.getAttribute("user")==null) { response.sendRedirect(request.getContextPath()
                 + "/jsp/login.jsp" ); return; } %>
@@ -12,7 +12,6 @@
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <title>Dashboard - The Knowledge Nexus</title>
                     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet" />
-                    <!-- Use timestamp to bust cache -->
                     <link rel="stylesheet"
                         href="${pageContext.request.contextPath}/css/style.css?v=<%= System.currentTimeMillis() %>">
                 </head>
@@ -89,53 +88,58 @@
                                 </form>
                             </div>
 
-                            <div class="content-grid">
+                            <div class="content-grid" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));">
                                 <c:choose>
                                     <c:when test="${not empty books}">
                                         <c:forEach var="book" items="${books}">
-                                            <div class="glass-panel book-card-premium" style="padding: 20px;">
-                                                <div style="width: 100%; height: 260px; margin-bottom: 20px; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.2); position: relative;">
+                                            <div class="glass-panel" style="padding: 0; display: flex; height: 200px; transition: transform 0.3s ease; border: 1px solid var(--glass-border); overflow: hidden; position: relative;">
+                                                <!-- Cover Section -->
+                                                <div style="width: 130px; background: rgba(0,0,0,0.3); border-right: 1px solid var(--glass-border); position: relative;">
                                                     <img src="https://covers.openlibrary.org/b/isbn/${book.isbn}-M.jpg?default=false"
                                                          alt="${book.title}"
                                                          style="width: 100%; height: 100%; object-fit: cover;"
                                                          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                    <div class="book-fallback-icon" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: rgba(255, 153, 0, 0.1); color: #FF9900; font-size: 3rem;">
+                                                    <div class="book-fallback-icon" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: rgba(255, 153, 0, 0.1); color: #FF9900; font-size: 2.5rem; position: absolute; top:0; left:0;">
                                                         <i class="ri-book-3-line"></i>
                                                     </div>
                                                 </div>
-                                                <div class="book-title">
-                                                    <c:out value="${book.title}" />
-                                                </div>
-                                                <div class="book-author">by
-                                                    <c:out value="${book.author}" />
-                                                </div>
 
-                                                <div style="margin-top: auto; width: 100%;">
-                                                    <c:choose>
-                                                        <c:when test="${activeBookIds.contains(book.id)}">
-                                                            <button class="btn btn-secondary" disabled
-                                                                style="width: 100%; opacity: 0.5;">
-                                                                <i class="ri-time-line"></i> Active Loan
-                                                            </button>
-                                                        </c:when>
-                                                        <c:when test="${book.availableCopies > 0}">
-                                                            <form action="${pageContext.request.contextPath}/borrowBook"
-                                                                method="POST">
-                                                                <input type="hidden" name="bookId" value="${book.id}">
-                                                                <input type="hidden" name="action" value="borrow">
-                                                                <button type="submit" class="btn btn-primary"
-                                                                    style="width: 100%;">
-                                                                    Borrow Book
+                                                <!-- Info Section -->
+                                                <div style="padding: 20px; flex: 1; display: flex; flex-direction: column; min-width: 0;">
+                                                    <div style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${book.title}">
+                                                        <c:out value="${book.title}" />
+                                                    </div>
+                                                    <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px;">
+                                                        by <c:out value="${book.author}" />
+                                                    </div>
+
+                                                    <div style="margin-top: auto; width: 100%;">
+                                                        <c:choose>
+                                                            <c:when test="${activeBookIds.contains(book.id)}">
+                                                                <button class="btn btn-secondary" disabled
+                                                                    style="width: 100%; opacity: 0.5; padding: 8px; font-size: 0.85rem; justify-content: center;">
+                                                                    <i class="ri-time-line"></i> Active Loan
                                                                 </button>
-                                                            </form>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <button class="btn btn-secondary" disabled
-                                                                style="width: 100%; opacity: 0.5;">
-                                                                Out of Stock
-                                                            </button>
-                                                        </c:otherwise>
-                                                    </c:choose>
+                                                            </c:when>
+                                                            <c:when test="${book.availableCopies > 0}">
+                                                                <form action="${pageContext.request.contextPath}/borrowBook"
+                                                                    method="POST" style="margin:0;">
+                                                                    <input type="hidden" name="bookId" value="${book.id}">
+                                                                    <input type="hidden" name="action" value="borrow">
+                                                                    <button type="submit" class="btn btn-primary"
+                                                                        style="width: 100%; padding: 8px; font-size: 0.9rem; justify-content: center;">
+                                                                        Borrow
+                                                                    </button>
+                                                                </form>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <button class="btn btn-secondary" disabled
+                                                                    style="width: 100%; opacity: 0.5; padding: 8px; font-size: 0.85rem; justify-content: center;">
+                                                                    Out of Stock
+                                                                </button>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </c:forEach>
