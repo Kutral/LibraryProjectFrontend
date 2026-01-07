@@ -85,9 +85,10 @@
 
 <div align="center">
 
-### 👨‍💻 Developed By
+### Made with ❤️ by Kutraleeswaran
 
-**[Kutraleeswaran](https://github.com/kutraleeswaran)**
+[![GitHub](https://img.shields.io/badge/GitHub-Profile-black?style=for-the-badge&logo=github)](https://github.com/kutraleeswaran)
+
 
 *"Knowledge is the only infinite resource."*
 
